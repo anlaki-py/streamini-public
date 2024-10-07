@@ -47,25 +47,54 @@ def create_model(model_name, system_prompt):
     )
 
 def display_chat_message(role, message):
-    """Displays a chat message with appropriate formatting."""
-    if role == "user":
-        if "image" in message:
-            st.chat_message("user").image(
-                message["image"], caption=message.get("caption", "")
-            )
-        if "content" in message:
-            st.chat_message("user").markdown(message["content"], unsafe_allow_html=True)
-    else:
-        if "content" in message:
-            if is_arabic(message["content"]):
-                st.chat_message("assistant").markdown(
-                    f'<div dir="rtl">{message["content"]}</div>',
-                    unsafe_allow_html=True,
-                )
+    """Displays a chat message with appropriate formatting and a copy button."""
+    try:
+        # Check if messages exist in session_state
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        # Try to find the message index
+        try:
+            message_index = st.session_state.messages.index(message)
+        except ValueError:
+            message_index = len(st.session_state.messages) - 1  # If not found, it's the last message
+
+        # Check for the role and handle user/assistant message display
+        if role == "user":
+            if isinstance(message, dict):  # Ensure message is a dictionary
+                # Handle image display if the "image" key exists
+                if "image" in message:
+                    st.chat_message("user").image(
+                        message.get("image"), caption=message.get("caption", "")
+                    )
+
+                # Handle content display
+                if "content" in message:
+                    with st.chat_message("user"):
+                        st.markdown(message.get("content", ""), unsafe_allow_html=True)
+                        if st.button("Copy", key=f"copy_user_{message_index}"):
+                            st.text_area("Copy from here:", message.get("content", ""), key=f"textarea_user_{message_index}", height=250)
             else:
-                st.chat_message("assistant").markdown(
-                    message["content"], unsafe_allow_html=True
-                )
+                st.warning("Message format is invalid. Expected a dictionary.")
+        else:
+            if isinstance(message, dict):  # Ensure message is a dictionary
+                if "content" in message:
+                    content = message.get("content", "")
+                    if is_arabic(content):
+                        with st.chat_message("assistant"):
+                            st.markdown(f'<div dir="rtl">{content}</div>', unsafe_allow_html=True)
+                            if st.button("Copy", key=f"copy_assistant_{message_index}"):
+                                st.text_area("Copy from here:", content, key=f"textarea_assistant_{message_index}", height=250)
+                    else:
+                        with st.chat_message("assistant"):
+                            st.markdown(content, unsafe_allow_html=True)
+                            if st.button("Copy", key=f"copy_assistant_{message_index}"):
+                                st.text_area("Copy from here:", content, key=f"textarea_assistant_{message_index}", height=250)
+            else:
+                st.warning("Message format is invalid. Expected a dictionary.")
+
+    except Exception as e:
+        st.error(f"An error occurred while displaying the message: {e}")
 
 def handle_text_message(user_message, chat_session):
     """Handles user text messages and generates responses."""

@@ -63,23 +63,31 @@ def display_session_management_controls(
             st.sidebar.error("Please enter a session name before saving.")
     """
     
+    
     # Dropdown to select a session to load
-    # selected_session = st.sidebar.selectbox(
-        # "Load a saved session:", saved_sessions, index=last_session_index)
+    selected_session = st.sidebar.selectbox(
+        "Load a saved session:", saved_sessions, index=last_session_index)
 
-    """
+    
     # Button to load the selected session
     if st.sidebar.button("Load Chat Session"):
         if selected_session:
             load_chat_session(selected_session, system_prompt)  # Pass system_prompt
         else:
             st.sidebar.error("Please select a session to load.")
-    """
+    
+
+
+
+
+
+
 
     # Button to delete the selected session (with red warning text)
-    # st.sidebar.markdown(
-        # """<h1 style="color:red">Delete selected session:</h1>""",
-        # unsafe_allow_html=True,)
+    # st.sidebar.markdown("""<h1 style="color:red">Delete selected session:</h1>""", unsafe_allow_html=True,)
+    
+    
+    
     
     """
     if st.sidebar.button("Delete Session"):

@@ -4,9 +4,7 @@ from PIL import Image
 import google.generativeai as genai
 
 from utils.config_manager import load_config, update_config
-from utils.session_manager import (
-    display_session_management_controls,
-)
+from utils.session_manager import display_session_management_controls
 from utils.model_utils import (
     create_model,
     display_chat_message,
@@ -124,14 +122,17 @@ if not os.path.exists(SESSION_DIR):
 
 
 # Sidebar: Session management controls
-# st.sidebar.write("---")
-# st.sidebar.markdown(
-    # """> <h1 style="color: #f249f2;">Session Management</h1>""",
-    # unsafe_allow_html=True,)
+st.sidebar.write("---")
+st.sidebar.markdown(
+    """> <h1 style="color: #f249f2;">Session Management</h1>""",
+    unsafe_allow_html=True,)
 
 
 
-session_name = '' # st.sidebar.text_input("Enter session name to save:", value="last_session")
+# session_name = st.sidebar.text_input("Enter session name to save:", value="last_session")   # show
+session_name = '' # st.sidebar.text_input("Enter session name to save:", value="last_session")   # hide
+
+
 
 # List available saved sessions
 saved_sessions = [f for f in os.listdir(SESSION_DIR) if f.endswith(".pkl")]
